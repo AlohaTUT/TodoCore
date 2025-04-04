@@ -3,18 +3,30 @@
 $filename = 'todos.txt';
 date_default_timezone_set('Asia/Shanghai');
 
+// 优先级配置（可自定义扩展）
+$priorities = [
+    'urgent'    => ['icon' => '🔥', 'label' => '紧急'],
+    'important' => ['icon' => '⭐', 'label' => '重要'],
+    'normal'    => ['icon' => '🟢', 'label' => '普通']
+];
+
 // 读取数据
 $todos = file_exists($filename) ? unserialize(file_get_contents($filename)) : [];
 
 // 处理表单提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['task'])) {
+        $priority = isset($_POST['priority']) && array_key_exists($_POST['priority'], $priorities) 
+            ? $_POST['priority'] 
+            : 'normal';
+
         $newTask = [
             'task' => htmlspecialchars($_POST['task']),
+            'priority' => $priority,
             'completed' => false,
             'time' => time()
         ];
-        array_unshift($todos, $newTask); // 新任务添加到开头
+        array_unshift($todos, $newTask);
         file_put_contents($filename, serialize($todos));
     }
     header('Location: '.$_SERVER['PHP_SELF']);
@@ -84,6 +96,12 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             margin-bottom: 2rem;
         }
 
+        .input-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
         input[type="text"] {
             flex: 1;
             padding: 0.8rem;
@@ -93,9 +111,13 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary);
+        select {
+            padding: 0.8rem;
+            border: 2px solid #BBDEFB;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            min-width: 120px;
         }
 
         button {
@@ -112,10 +134,6 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
         button:hover {
             background: var(--secondary);
             transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(0);
         }
 
         .todo-list {
@@ -138,6 +156,17 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             transform: translateX(5px);
             box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
         }
+
+        .priority-tag {
+            font-size: 1.2em;
+            min-width: 40px;
+            text-align: center;
+            margin-right: 0.8rem;
+        }
+
+        .priority-urgent { color: #ff4444; }
+        .priority-important { color: #ffbb33; }
+        .priority-normal { color: #00C851; }
 
         .todo-text {
             flex: 1;
@@ -190,6 +219,12 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
                 width: 100%;
                 text-align: left;
             }
+            .input-group {
+                flex-direction: column;
+            }
+            select {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -198,13 +233,26 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
         <h1>📝 待办清单</h1>
         
         <form class="add-form" method="post">
-            <input type="text" name="task" placeholder="输入新任务..." required>
-            <button type="submit">➕ 添加</button>
+            <div class="input-group">
+                <input type="text" name="task" placeholder="输入新任务..." required>
+                <select name="priority">
+                    <?php foreach ($priorities as $key => $p): ?>
+                    <option value="<?= $key ?>"><?= $p['icon'] ?> <?= $p['label'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit">➕ 添加任务</button>
+            </div>
         </form>
 
         <ul class="todo-list">
-            <?php foreach ($todos as $index => $todo): ?>
+            <?php foreach ($todos as $index => $todo): 
+                $priority = $todo['priority'] ?? 'normal';
+                $priorityData = $priorities[$priority] ?? $priorities['normal'];
+            ?>
             <li class="todo-item <?= $todo['completed'] ? 'completed' : '' ?>">
+                <span class="priority-tag priority-<?= $priority ?>">
+                    <?= $priorityData['icon'] ?>
+                </span>
                 <span class="todo-text"><?= $todo['task'] ?></span>
                 <span class="time"><?= date('Y/m/d H:i', $todo['time']) ?></span>
                 <div class="actions">
