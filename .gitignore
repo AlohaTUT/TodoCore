@@ -1,25 +1,19 @@
-# CakePHP 3
+# 忽略系统文件
+.DS_Store
+Thumbs.db
 
-/vendor/*
-/config/app.php
+# 忽略开发环境/编辑器文件
+.idea/       # PHPStorm/IntelliJ 项目文件
+.vscode/     # VS Code 配置
+*.swp        # Vim 临时文件
+*.swo        # Vim 临时文件
 
-/tmp/cache/models/*
-!/tmp/cache/models/empty
-/tmp/cache/persistent/*
-!/tmp/cache/persistent/empty
-/tmp/cache/views/*
-!/tmp/cache/views/empty
-/tmp/sessions/*
-!/tmp/sessions/empty
-/tmp/tests/*
-!/tmp/tests/empty
+# 忽略日志文件
+*.log
 
-/logs/*
-!/logs/empty
+# 忽略用户上传的数据文件
+/uploads/
+/temp/
 
-# CakePHP 2
-
-/app/tmp/*
-/app/Config/core.php
-/app/Config/database.php
-/vendors/*
+# 忽略 PHP 临时文件
+/sessions/
