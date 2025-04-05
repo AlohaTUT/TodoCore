@@ -66,6 +66,13 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             --background: #E3F2FD;
             --text: #333;
         }
+        /* 夜间模式灰黑色调变量 */
+        .dark-mode {
+            --primary: #3a3a3a;    /* 按钮及强调色 */
+            --secondary: #5a5a5a;  /* 次要按钮色 */
+            --background: #2b2b2b; /* 页面背景 */
+            --text: #dcdcdc;       /* 文字颜色 */
+        }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -74,6 +81,7 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             padding: 0 1rem;
             background: var(--background);
             color: var(--text);
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
@@ -81,6 +89,13 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             padding: 2rem;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        /* 夜间模式下调整 container 样式 */
+        .dark-mode .container {
+            background: #333333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
         h1 {
@@ -226,6 +241,17 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
                 width: 100%;
             }
         }
+
+        /* 固定右下角夜间模式切换按钮 */
+        #toggleDarkMode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -265,5 +291,27 @@ if (isset($_GET['action']) && isset($_GET['index'])) {
             <?php endforeach; ?>
         </ul>
     </div>
+    <!-- 右下角夜间模式切换按钮 -->
+    <button id="toggleDarkMode">🌙 夜间模式</button>
+    <script>
+        // 检查是否已开启夜间模式（利用 localStorage 保存状态）
+        const body = document.body;
+        const toggleBtn = document.getElementById('toggleDarkMode');
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            toggleBtn.textContent = '☀️ 日间模式';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                toggleBtn.textContent = '☀️ 日间模式';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                toggleBtn.textContent = '🌙 夜间模式';
+            }
+        });
+    </script>
 </body>
 </html>
