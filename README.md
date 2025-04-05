@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 **一个极简主义的自托管待办清单应用，数据完全存储在您的服务器上**  
- | 🐛 [问题反馈](https://github.com/yourname/TodoCore/issues) |
+ | 🐛 [问题反馈](https://github.com/AlohaTUT/TodoCore/issues) |
 
 [![](https://img.picui.cn/free/2025/04/05/67f003c19406d.png)](https://img.picui.cn/free/2025/04/05/67f003c19406d.png)
 
